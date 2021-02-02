@@ -114,13 +114,16 @@
         float z;
     } Vector3;
 
-    // Quaternion type
-    typedef struct Quaternion {
+    // Vector4 type
+    typedef struct Vector4 {
         float x;
         float y;
         float z;
         float w;
-    } Quaternion;
+    } Vector4;
+
+    // Quaternion type
+    typedef Vector4 Quaternion;
 
     // Matrix type (OpenGL style 4x4 - right handed, column major)
     typedef struct Matrix {
@@ -161,7 +164,7 @@ RMDEF float Normalize(float value, float start, float end)
 }
 
 // Remap input value within input range to output range
-RMDEF float Remap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd) 
+RMDEF float Remap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd)
 {
     return (value - inputStart) / (inputEnd - inputStart) * (outputEnd - outputStart) + outputStart;
 }
@@ -294,6 +297,19 @@ RMDEF Vector2 Vector2Lerp(Vector2 v1, Vector2 v2, float amount)
     return result;
 }
 
+// Calculate reflected vector to normal
+RMDEF Vector2 Vector2Reflect(Vector2 v, Vector2 normal)
+{
+    Vector2 result = { 0 };
+
+    float dotProduct = Vector2DotProduct(v, normal);
+
+    result.x = v.x - (2.0f*normal.x)*dotProduct;
+    result.y = v.y - (2.0f*normal.y)*dotProduct;
+
+    return result;
+}
+
 // Rotate Vector by float in Degrees.
 RMDEF Vector2 Vector2Rotate(Vector2 v, float degs)
 {
@@ -309,14 +325,14 @@ RMDEF Vector2 Vector2MoveTowards(Vector2 v, Vector2 target, float maxDistance)
     float dx = target.x - v.x;
     float dy = target.y - v.y;
     float value = (dx*dx) + (dy*dy);
-    
+
     if ((value == 0) || ((maxDistance >= 0) && (value <= maxDistance*maxDistance))) result = target;
-    
+
     float dist = sqrtf(value);
-    
+
     result.x = v.x + dx/dist*maxDistance;
     result.y = v.y + dy/dist*maxDistance;
-    
+
     return result;
 }
 
@@ -954,14 +970,14 @@ RMDEF Matrix MatrixRotateXYZ(Vector3 ang)
 }
 
 // Returns zyx-rotation matrix (angles in radians)
-// TODO: This solution is suboptimal, it should be possible to create this matrix in one go 
+// TODO: This solution is suboptimal, it should be possible to create this matrix in one go
 // instead of using a 3 matrix multiplication
 RMDEF Matrix MatrixRotateZYX(Vector3 ang)
 {
     Matrix result = MatrixRotateZ(ang.z);
     result = MatrixMultiply(result, MatrixRotateY(ang.y));
     result = MatrixMultiply(result, MatrixRotateX(ang.x));
-    
+
     return result;
 }
 
@@ -1058,26 +1074,23 @@ RMDEF Matrix MatrixLookAt(Vector3 eye, Vector3 target, Vector3 up)
     Vector3 x = Vector3CrossProduct(up, z);
     x = Vector3Normalize(x);
     Vector3 y = Vector3CrossProduct(z, x);
-    y = Vector3Normalize(y);
 
     result.m0 = x.x;
-    result.m1 = x.y;
-    result.m2 = x.z;
+    result.m1 = y.x;
+    result.m2 = z.x;
     result.m3 = 0.0f;
-    result.m4 = y.x;
+    result.m4 = x.y;
     result.m5 = y.y;
-    result.m6 = y.z;
+    result.m6 = z.y;
     result.m7 = 0.0f;
-    result.m8 = z.x;
-    result.m9 = z.y;
+    result.m8 = x.z;
+    result.m9 = y.z;
     result.m10 = z.z;
     result.m11 = 0.0f;
-    result.m12 = eye.x;
-    result.m13 = eye.y;
-    result.m14 = eye.z;
+    result.m12 = -Vector3DotProduct(x, eye);
+    result.m13 = -Vector3DotProduct(y, eye);
+    result.m14 = -Vector3DotProduct(z, eye);
     result.m15 = 1.0f;
-
-    result = MatrixInvert(result);
 
     return result;
 }
@@ -1312,17 +1325,17 @@ RMDEF Quaternion QuaternionFromVector3ToVector3(Vector3 from, Vector3 to)
 // Returns a quaternion for a given rotation matrix
 RMDEF Quaternion QuaternionFromMatrix(Matrix mat)
 {
-    Quaternion result = { 0.0f };
-    
+    Quaternion result = { 0 };
+
     if ((mat.m0 > mat.m5) && (mat.m0 > mat.m10))
     {
         float s = sqrtf(1.0f + mat.m0 - mat.m5 - mat.m10)*2;
-        
+
         result.x = 0.25f*s;
         result.y = (mat.m4 + mat.m1)/s;
         result.z = (mat.m2 + mat.m8)/s;
         result.w = (mat.m9 - mat.m6)/s;
-    } 
+    }
     else if (mat.m5 > mat.m10)
     {
         float s = sqrtf(1.0f + mat.m5 - mat.m0 - mat.m10)*2;
@@ -1330,7 +1343,7 @@ RMDEF Quaternion QuaternionFromMatrix(Matrix mat)
         result.y = 0.25f*s;
         result.z = (mat.m9 + mat.m6)/s;
         result.w = (mat.m2 - mat.m8)/s;
-    } 
+    }
     else
     {
         float s  = sqrtf(1.0f + mat.m10 - mat.m0 - mat.m5)*2;
@@ -1339,7 +1352,7 @@ RMDEF Quaternion QuaternionFromMatrix(Matrix mat)
         result.z = 0.25f*s;
         result.w = (mat.m4 - mat.m1)/s;
     }
-    
+
     return result;
 }
 
@@ -1347,20 +1360,20 @@ RMDEF Quaternion QuaternionFromMatrix(Matrix mat)
 RMDEF Matrix QuaternionToMatrix(Quaternion q)
 {
     Matrix result = MatrixIdentity();
-    
+
     float a2 = 2*(q.x*q.x), b2=2*(q.y*q.y), c2=2*(q.z*q.z); //, d2=2*(q.w*q.w);
-    
+
     float ab = 2*(q.x*q.y), ac=2*(q.x*q.z), bc=2*(q.y*q.z);
     float ad = 2*(q.x*q.w), bd=2*(q.y*q.w), cd=2*(q.z*q.w);
 
     result.m0 = 1 - b2 - c2;
     result.m1 = ab - cd;
     result.m2 = ac + bd;
-    
+
     result.m4 = ab + cd;
     result.m5 = 1 - a2 - c2;
     result.m6 = bc - ad;
-    
+
     result.m8 = ac - bd;
     result.m9 = bc + ad;
     result.m10 = 1 - a2 - b2;
