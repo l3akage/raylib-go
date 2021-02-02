@@ -47,6 +47,10 @@ You can also build binary in [MSYS2](https://msys2.github.io/) shell.
 
 [RPi example](https://github.com/gen2brain/raylib-go/tree/master/examples/others/rpi/basic_window).
 
+##### Raspberry Pi 4
+
+    apt-get install libdrm-dev libegl1-mesa-dev libgles2-mesa-dev libgbm-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev
+
 ### Installation
 
     go get -v -u github.com/gen2brain/raylib-go/raylib
