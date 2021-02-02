@@ -10,7 +10,6 @@ package rl
 */
 import "C"
 import "unsafe"
-import "reflect"
 
 // cptr returns C pointer
 func (w *Wave) cptr() *C.Wave {
@@ -172,20 +171,6 @@ func WaveCrop(wave Wave, initSample int32, finalSample int32) {
 	cinitSample := (C.int)(initSample)
 	cfinalSample := (C.int)(finalSample)
 	C.WaveCrop(cwave, cinitSample, cfinalSample)
-}
-
-// GetWaveData - Get samples data from wave as a floats array
-func GetWaveData(wave Wave) []float32 {
-	var data []float32
-	cwave := wave.cptr()
-	ret := C.GetWaveData(*cwave)
-
-	sliceHeader := (*reflect.SliceHeader)((unsafe.Pointer(&data)))
-	sliceHeader.Cap = int(wave.SampleCount)
-	sliceHeader.Len = int(wave.SampleCount)
-	sliceHeader.Data = uintptr(unsafe.Pointer(ret))
-
-	return data
 }
 
 // LoadMusicStream - Load music stream from file

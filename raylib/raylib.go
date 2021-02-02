@@ -150,20 +150,34 @@ const (
 
 	// Raylib Config Flags
 
-	// Set to show raylib logo at startup
-	FlagShowLogo = 1
-	// Set to run program in fullscreen
-	FlagFullscreenMode = 2
-	// Set to allow resizable window
-	FlagWindowResizable = 4
-	// Set to disable window decoration (frame and buttons)
-	FlagWindowUndecorated = 8
-	// Set to allow transparent window
-	FlagWindowTransparent = 16
-	// Set to try enabling MSAA 4X
-	FlagMsaa4xHint = 32
 	// Set to try enabling V-Sync on GPU
-	FlagVsyncHint = 64
+	FlagVsyncHint = 0x00000040
+	// Set to run program in fullscreen
+	FlagFullscreenMode = 0x00000002
+	// Set to allow resizable window
+	FlagWindowResizable = 0x00000004
+	// Set to disable window decoration (frame and buttons)
+	FlagWindowUndecorated = 0x00000008
+	// Set to hide window
+	FlagWindowHidden = 0x00000080
+	// Set to minimize window (iconify)
+	FlagWindowMinimized = 0x00000200
+	// Set to maximize window (expanded to monitor)
+	FlagWindowMaximized = 0x00000400
+	// Set to window non focused
+	FlagWindowUnfocused = 0x00000800
+	// Set to window always on top
+	FlagWindowTopmost = 0x00001000
+	// Set to allow windows running while minimized
+	FlagWindowAlwaysRun = 0x00000100
+	// Set to allow transparent framebuffer
+	FlagWindowTransparent = 0x00000010
+	// Set to support HighDPI
+	FlagWindowHighdpi = 0x00002000
+	// Set to try enabling MSAA 4X
+	FlagMsaa4xHint = 0x00000020
+	// Set to try enabling interlaced video format (for V3D)
+	FlagInterlacedHint = 0x00010000
 
 	// Keyboard Function Keys
 	KeySpace        = 32

@@ -113,12 +113,13 @@ func SetMatrixModelview(view Matrix) {
 }
 
 // GenTextureCubemap - Generate cubemap texture from HDR texture
-func GenTextureCubemap(shader Shader, skyHDR Texture2D, size int) Texture2D {
+func GenTextureCubemap(shader Shader, skyHDR Texture2D, size int, format PixelFormat) Texture2D {
 	cshader := shader.cptr()
 	cskyHDR := skyHDR.cptr()
 	csize := (C.int)(size)
+	cformat := (C.int)(format)
 
-	ret := C.GenTextureCubemap(*cshader, *cskyHDR, csize)
+	ret := C.GenTextureCubemap(*cshader, *cskyHDR, csize, cformat)
 	v := newTexture2DFromPointer(unsafe.Pointer(&ret))
 	return v
 }

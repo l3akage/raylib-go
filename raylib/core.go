@@ -97,12 +97,12 @@ func ToggleFullscreen() {
 
 // UnhideWindow - Show the window
 func UnhideWindow() {
-	C.UnhideWindow()
+	C.ClearWindowState(FlagWindowHidden)
 }
 
 // HideWindow - Hide the window
 func HideWindow() {
-	C.HideWindow()
+	C.SetWindowState(FlagWindowHidden)
 }
 
 // SetWindowIcon - Set icon for window (only PLATFORM_DESKTOP)
