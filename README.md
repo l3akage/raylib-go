@@ -14,11 +14,11 @@ Golang bindings for [raylib](http://www.raylib.com/), a simple and easy-to-use l
 
 ###### X11
 
-    apt-get install libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev 
+    apt-get install libgl1-mesa-dev libxi-dev libxcursor-dev libxrandr-dev libxinerama-dev
 
-###### Wayland 
+###### Wayland
 
-    apt-get install libgl1-mesa-dev libwayland-dev libxkbcommon-dev 
+    apt-get install libgl1-mesa-dev libwayland-dev libxkbcommon-dev
 
 ##### Fedora
 
@@ -26,7 +26,7 @@ Golang bindings for [raylib](http://www.raylib.com/), a simple and easy-to-use l
 
     dnf install mesa-libGL-devel libXi-devel libXcursor-devel libXrandr-devel libXinerama-devel
 
-###### Wayland 
+###### Wayland
 
     dnf install mesa-libGL-devel wayland-devel libxkbcommon-devel
 
@@ -57,6 +57,7 @@ You can also build binary in [MSYS2](https://msys2.github.io/) shell.
 * `opengl21` - uses OpenGL 2.1 backend (default is 3.3 on desktop)
 * `opengl11` - uses OpenGL 1.1 backend (pseudo OpenGL 1.1 style)
 * `wayland` - builds against Wayland libraries
+* `drm` - build PLATFORM_DRM for Rapberry Pi 4
 
 ### Documentation
 
